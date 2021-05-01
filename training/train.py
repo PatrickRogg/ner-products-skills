@@ -3,12 +3,15 @@ import os
 from os import listdir
 
 import numpy as np
+import torch
 from sklearn.model_selection import train_test_split
 from transformers import AutoTokenizer, AutoConfig, AutoModelForTokenClassification, pipeline, TrainingArguments, \
     Trainer
 
 from config import PROD_LABEL, SKILL_LABEL, OTHER_LABEL
 from training.entity_dataset import EntityDataset
+
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 entity_to_id = {f'B-{PROD_LABEL}': 0, f'L-{PROD_LABEL}': 1, f'I-{PROD_LABEL}': 2, f'U-{PROD_LABEL}': 3,
                 f'B-{SKILL_LABEL}': 4, f'L-{SKILL_LABEL}': 5, f'I-{SKILL_LABEL}': 6,
@@ -18,12 +21,12 @@ configuration = AutoConfig.from_pretrained('distilbert-base-multilingual-cased')
 configuration.num_labels = len(entity_to_id)
 configuration.id2label = {v: k for k, v in entity_to_id.items()}
 configuration.label2id = entity_to_id
-model = AutoModelForTokenClassification.from_config(configuration)
+model = AutoModelForTokenClassification.from_config(configuration).to(device)
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-multilingual-cased")
 
 
 def build_ner_model():
-    ner = pipeline('ner', model=model, tokenizer=tokenizer)
+    ner = pipeline('ner', model=model, tokenizer=tokenizer, device=0 if torch.cuda.is_available() else -1)
     return ner
 
 
@@ -103,8 +106,8 @@ def build_trainer():
         model=model,
         args=training_args,
         train_dataset=EntityDataset(train_encodings, train_labels),
-        eval_dataset=EntityDataset(val_encodings, val_labels)
-
+        eval_dataset=EntityDataset(val_encodings, val_labels),
+        device=device,
     )
 
 
