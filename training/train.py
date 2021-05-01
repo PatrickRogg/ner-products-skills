@@ -58,7 +58,7 @@ def encode_entities(words, entities, encodings):
 
 
 def get_words_and_labels():
-    labeled_data_folder = f'..{os.sep}data{os.sep}labeled-data{os.sep}'
+    labeled_data_folder = f'data{os.sep}labeled-data{os.sep}'
     filenames = [f for f in listdir(labeled_data_folder)]
     words = []
     labels = []
@@ -78,13 +78,13 @@ def get_words_and_labels():
 
 def build_trainer():
     training_args = TrainingArguments(
-        output_dir=f'..{os.sep}results',  # output directory
+        output_dir='results',  # output directory
         num_train_epochs=3,  # total # of training epochs
         per_device_train_batch_size=16,  # batch size per device during training
         per_device_eval_batch_size=64,  # batch size for evaluation
         warmup_steps=30,  # number of warmup steps for learning rate scheduler
         weight_decay=0.01,  # strength of weight decay
-        logging_dir=f'..{os.sep}logs',  # directory for storing logs
+        logging_dir='logs',  # directory for storing logs
     )
 
     words, labels = get_words_and_labels()
@@ -117,7 +117,3 @@ def train():
     print(ner('Ich kaufe gerne ein Iphone'))
 
     model.save_pretrained(f'..{os.sep}models')
-
-
-if __name__ == "__main__":
-    train()
