@@ -4,3 +4,5 @@ models
 data
 venv
 service-key.json
+__pycache__
+.idea
