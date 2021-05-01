@@ -106,8 +106,7 @@ def build_trainer():
         model=model,
         args=training_args,
         train_dataset=EntityDataset(train_encodings, train_labels),
-        eval_dataset=EntityDataset(val_encodings, val_labels),
-        device=0 if torch.cuda.is_available() else -1,
+        eval_dataset=EntityDataset(val_encodings, val_labels)
     )
 
 
