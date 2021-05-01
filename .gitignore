@@ -1,7 +1,6 @@
 results
 logs
 models
-data
 venv
 service-key.json
 __pycache__
